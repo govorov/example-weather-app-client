@@ -1,0 +1,23 @@
+.x8 {
+	font-size: 8rem;
+}
+
+.x5 {
+	font-size: 5rem;
+}
+
+.x2 {
+	font-size: 3rem;
+}
+
+.wi {
+	opacity: 0.7;
+}
+
+.wi-fw {
+	width: 0.8em;
+}
+
+.monospace {
+	font-family: monospace;
+}

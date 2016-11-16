@@ -1,20 +1,105 @@
+mixin temp-meter
+  span.monospace&attributes(attributes)
+    |--
+  span.monospace &deg;C
+
+
+mixin stats-table(param)
+  table.table.table-bordered
+    tr
+      td
+      td min
+      td max
+      td avg
+    tr
+      td day
+      td
+        +temp-meter(id=`${param}-day-min`)
+      td
+        +temp-meter(id=`${param}-day-max`)
+      td
+        +temp-meter(id=`${param}-day-avg`)
+    tr
+      td week
+      td
+        +temp-meter(id=`${param}-week-min`)
+      td
+        +temp-meter(id=`${param}-week-max`)
+      td
+        +temp-meter(id=`${param}-week-avg`)
+    tr
+      td overall
+      td
+        +temp-meter(id=`${param}-overall-min`)
+      td
+        +temp-meter(id=`${param}-overall-max`)
+      td
+        +temp-meter(id=`${param}-overall-avg`)
+
+
 doctype html
 html
   head
     link(rel='stylesheet' href='node_modules/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet' href='node_modules/weather-icons/css/weather-icons.min.css')
-    title Sample weather app
+    link(rel='stylesheet' href='node_modules/font-awesome/css/font-awesome.min.css')
+    link(rel='stylesheet' href='css/style.css')
+    title Weather monitor
 
   body
+    .navbar.navbar-default
+      .container
+        .navbar-header
+          .navbar-brand Weather monitor X9000 enterprise edition
+        .navbar-collapse.collapse
+          ul.nav.navbar-nav.navbar-right
+            li
+              a#pause-app
+                .fa.fa-pause
+            li
+              a#stop-app
+                .fa.fa-stop
+
+    .container.x5
+      .row
+        .col-xs-1
+          .wi.wi-fw.wi-thermometer
+        .col-xs-11
+          #top-overall-container
+            canvas#top-overall-temperature(width=500 height=50)
+      .row
+        .col-xs-1
+          .wi.wi-fw.wi-strong-wind
+        .col-xs-11
+          canvas#top-overall-wind(width=500 height=50)
+      .row
+        .col-xs-1
+          .wi.wi-fw.wi-humidity
+        .col-xs-11
+          canvas#top-overall-humidity(width=500 height=50)
+
     .container
       .row
-        .col-xs-6
-          .panel
+        .col-xs-12
+          .panel.panel-default
             .panel-body
-              .wi.wi-day-sunny
+              .x8.text-warning.text-center
+                .wi.wi-day-snow-thunderstorm
 
-        .col-xs-6
-          .panel
+        .col-xs-12
+          .panel.panel-default
             .panel-body
+              .row
+                .col-xs-3
+                  .x5
+                    .wi.wi-fw.wi-thermometer
+                    +temp-meter#temp-current
 
+                .col-xs-9
+                  +stats-table('temp')
+
+
+
+
+    script(src='./node_modules/smoothie/smoothie.js')
     script(src='./js/main.js')
