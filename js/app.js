@@ -1,7 +1,8 @@
 const Rx = require('rxjs/Rx');
 const _  = require('lodash');
 
-const apiHost = 'https://example-weather-server.herokuapp.com';
+// const apiHost = 'https://example-weather-server.herokuapp.com';
+const apiHost = 'http://localhost:3000';
 
 const get = (parameter,callback)=>{
 	fetch(`${apiHost}/${parameter}`)
@@ -13,7 +14,35 @@ const get = (parameter,callback)=>{
 };
 
 const pointsInDay  = 4;
-const pointsInWeek = pointsInDay*7;
+const pointsInWeek = pointsInDay*4;
+
+
+const colorize = function(element,value,tresholds){
+	let minColor = '#959ce8';
+	let maxColor = '#c52222';
+	let color;
+
+	let [min, max] = tresholds;
+
+	if (value < min){
+		color = minColor;
+	}
+	else if (value > max){
+		color = maxColor;
+	}
+	else {
+		color = null;
+	}
+
+	element.style.color = color;
+};
+
+
+const tresholds = {
+	temperature : [-10,30],
+	wind        : [0,10],
+};
+
 
 let streams = {
 	temperature : new Rx.Subject(),
@@ -42,6 +71,12 @@ streams.precipation.subscribe((value)=>{
 //stats streams
 streams.temperatureDay  = streams.temperature.bufferCount(pointsInDay);
 streams.temperatureWeek = streams.temperature.bufferCount(pointsInWeek);
+
+streams.humidityDay  = streams.humidity.bufferCount(pointsInDay);
+streams.humidityWeek = streams.humidity.bufferCount(pointsInWeek);
+
+streams.windDay  = streams.wind.bufferCount(pointsInDay);
+streams.windWeek = streams.wind.bufferCount(pointsInWeek);
 //<stats streams
 
 let appPaused = true;
@@ -170,25 +205,129 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	let currentTemp = document.getElementById('temp-current');
 	streams.temperature.subscribe((value)=>{
 		currentTemp.innerHTML = value;
+		colorize(currentTemp,value,tresholds.temperature);
 	});
 
-	let dayMinTemp  = document.getElementById('temp-day-min');
-	let dayMaxTemp  = document.getElementById('temp-day-max');
-	let dayAvgTemp  = document.getElementById('temp-day-avg');
-	let weekMinTemp = document.getElementById('temp-week-min');
-	let weekMaxTemp = document.getElementById('temp-week-max');
-	let weekAvgTemp = document.getElementById('temp-week-avg');
+	let currentWind = document.getElementById('wind-current');
+	streams.wind.subscribe((value)=>{
+		currentWind.innerHTML = value;
+		colorize(currentWind,value,tresholds.wind);
+	});
+
+	let currentHumidity = document.getElementById('humidity-current');
+	streams.humidity.subscribe((value)=>{
+		currentHumidity.innerHTML = value;
+	});
+	//<watch
+
+	//Q - how to refactor
+	let dayMinTemp      = document.getElementById('temp-day-min');
+	let dayMaxTemp      = document.getElementById('temp-day-max');
+	let dayAvgTemp      = document.getElementById('temp-day-avg');
+	let weekMinTemp     = document.getElementById('temp-week-min');
+	let weekMaxTemp     = document.getElementById('temp-week-max');
+	let weekAvgTemp     = document.getElementById('temp-week-avg');
+
+	let dayMinHumidity  = document.getElementById('humidity-day-min');
+	let dayMaxHumidity  = document.getElementById('humidity-day-max');
+	let dayAvgHumidity  = document.getElementById('humidity-day-avg');
+	let weekMinHumidity = document.getElementById('humidity-week-min');
+	let weekMaxHumidity = document.getElementById('humidity-week-max');
+	let weekAvgHumidity = document.getElementById('humidity-week-avg');
+
+	let dayMinWind      = document.getElementById('wind-day-min');
+	let dayMaxWind      = document.getElementById('wind-day-max');
+	let dayAvgWind      = document.getElementById('wind-day-avg');
+	let weekMinWind     = document.getElementById('wind-week-min');
+	let weekMaxWind     = document.getElementById('wind-week-max');
+	let weekAvgWind     = document.getElementById('wind-week-avg');
+
 
 	streams.temperatureDay
 	.subscribe((values)=>{
 		let min = _.min(values);
 		let max = _.max(values);
-		let avg = _.sum(values)/pointsInDay;
+		let avg = _.mean(values);
 
 		dayMinTemp.innerHTML = min;
 		dayMaxTemp.innerHTML = max;
 		dayAvgTemp.innerHTML = avg;
 
+		colorize(dayMinTemp,min,tresholds.temperature);
+		colorize(dayMaxTemp,max,tresholds.temperature);
+		colorize(dayAvgTemp,avg,tresholds.temperature);
+	});
+
+
+	streams.temperatureWeek
+	.subscribe((values)=>{
+		let min = _.min(values);
+		let max = _.max(values);
+		let avg = _.mean(values);
+
+		weekMinTemp.innerHTML = min;
+		weekMaxTemp.innerHTML = max;
+		weekAvgTemp.innerHTML = avg;
+
+		colorize(weekMinTemp,min,tresholds.temperature);
+		colorize(weekMaxTemp,max,tresholds.temperature);
+		colorize(weekAvgTemp,avg,tresholds.temperature);
+	});
+
+
+	streams.windDay
+	.subscribe((values)=>{
+		let min = _.min(values);
+		let max = _.max(values);
+		let avg = _.mean(values);
+
+		dayMinWind.innerHTML = min;
+		dayMaxWind.innerHTML = max;
+		dayAvgWind.innerHTML = avg;
+
+		colorize(dayMinWind,min,tresholds.wind);
+		colorize(dayMaxWind,max,tresholds.wind);
+		colorize(dayAvgWind,avg,tresholds.wind);
+	});
+
+
+	streams.windWeek
+	.subscribe((values)=>{
+		let min = _.min(values);
+		let max = _.max(values);
+		let avg = _.mean(values);
+
+		weekMinWind.innerHTML = min;
+		weekMaxWind.innerHTML = max;
+		weekAvgWind.innerHTML = avg;
+
+		colorize(weekMinWind,min,tresholds.wind);
+		colorize(weekMaxWind,max,tresholds.wind);
+		colorize(weekAvgWind,avg,tresholds.wind);
+	});
+
+
+	streams.humidityDay
+	.subscribe((values)=>{
+		let min = _.min(values);
+		let max = _.max(values);
+		let avg = _.mean(values);
+
+		dayMinHumidity.innerHTML = min;
+		dayMaxHumidity.innerHTML = max;
+		dayAvgHumidity.innerHTML = avg;
+	});
+
+
+	streams.humidityWeek
+	.subscribe((values)=>{
+		let min = _.min(values);
+		let max = _.max(values);
+		let avg = _.mean(values);
+
+		weekMinHumidity.innerHTML = min;
+		weekMaxHumidity.innerHTML = max;
+		weekAvgHumidity.innerHTML = avg;
 	});
 
 	//comfort || not comfort

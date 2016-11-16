@@ -18,6 +18,10 @@
 	width: 0.8em;
 }
 
+.nowrap {
+	white-space: nowrap;
+}
+
 .monospace {
 	font-family: monospace;
 }

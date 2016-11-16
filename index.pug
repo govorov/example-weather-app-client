@@ -1,10 +1,11 @@
-mixin temp-meter
-  span.monospace&attributes(attributes)
-    |--
-  span.monospace &deg;C
+mixin meter(meter)
+  span.nowrap
+    span.monospace&attributes(attributes)
+      |--
+    span.monospace !{meter}
 
 
-mixin stats-table(param)
+mixin stats-table(param,meter)
   table.table.table-bordered
     tr
       td
@@ -14,27 +15,27 @@ mixin stats-table(param)
     tr
       td day
       td
-        +temp-meter(id=`${param}-day-min`)
+        +meter(meter)(id=`${param}-day-min`)
       td
-        +temp-meter(id=`${param}-day-max`)
+        +meter(meter)(id=`${param}-day-max`)
       td
-        +temp-meter(id=`${param}-day-avg`)
+        +meter(meter)(id=`${param}-day-avg`)
     tr
       td week
       td
-        +temp-meter(id=`${param}-week-min`)
+        +meter(meter)(id=`${param}-week-min`)
       td
-        +temp-meter(id=`${param}-week-max`)
+        +meter(meter)(id=`${param}-week-max`)
       td
-        +temp-meter(id=`${param}-week-avg`)
+        +meter(meter)(id=`${param}-week-avg`)
     tr
       td overall
       td
-        +temp-meter(id=`${param}-overall-min`)
+        +meter(meter)(id=`${param}-overall-min`)
       td
-        +temp-meter(id=`${param}-overall-max`)
+        +meter(meter)(id=`${param}-overall-max`)
       td
-        +temp-meter(id=`${param}-overall-avg`)
+        +meter(meter)(id=`${param}-overall-avg`)
 
 
 doctype html
@@ -69,12 +70,12 @@ html
             canvas#top-overall-temperature(width=500 height=50)
       .row
         .col-xs-1
-          .wi.wi-fw.wi-strong-wind
+          .wi.wi-fw.wi-tornado
         .col-xs-11
           canvas#top-overall-wind(width=500 height=50)
       .row
         .col-xs-1
-          .wi.wi-fw.wi-humidity
+          .wi.wi-fw.wi-smog
         .col-xs-11
           canvas#top-overall-humidity(width=500 height=50)
 
@@ -93,12 +94,34 @@ html
                 .col-xs-3
                   .x5
                     .wi.wi-fw.wi-thermometer
-                    +temp-meter#temp-current
+                    +meter('&deg;C')(id='temp-current')
 
                 .col-xs-9
-                  +stats-table('temp')
+                  +stats-table('temp','&deg;C')
 
+        .col-xs-12
+          .panel.panel-default
+            .panel-body
+              .row
+                .col-xs-3
+                  .x5
+                    .wi.wi-fw.wi-tornado
+                    +meter('&nbsp;m/s')(id='wind-current')
 
+                .col-xs-9
+                  +stats-table('wind','&nbsp;m/s')
+
+        .col-xs-12
+          .panel.panel-default
+            .panel-body
+              .row
+                .col-xs-3
+                  .x5
+                    .wi.wi-fw.wi-smog
+                    +meter('%')(id='humidity-current')
+
+                .col-xs-9
+                  +stats-table('humidity','%')
 
 
     script(src='./node_modules/smoothie/smoothie.js')
