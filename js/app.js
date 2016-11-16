@@ -1,6 +1,7 @@
 const Rx = require('rxjs/Rx');
 const _  = require('lodash');
 
+//TODO
 // const apiHost = 'https://example-weather-server.herokuapp.com';
 const apiHost = 'http://localhost:3000';
 
@@ -52,31 +53,17 @@ let streams = {
 };
 
 
-streams.temperature.subscribe((value)=>{
-	// console.log('temperature received: ',value);
-});
-
-streams.humidity.subscribe((value)=>{
-	// console.log('humidity received: ',value);
-});
-
-streams.wind.subscribe((value)=>{
-	// console.log('wind received: ',value);
-});
-
-streams.precipation.subscribe((value)=>{
-	// console.log('precipation received: ',value);
-});
-
 //stats streams
 streams.temperatureDay  = streams.temperature.bufferCount(pointsInDay);
-streams.temperatureWeek = streams.temperature.bufferCount(pointsInWeek);
 
-streams.humidityDay  = streams.humidity.bufferCount(pointsInDay);
-streams.humidityWeek = streams.humidity.bufferCount(pointsInWeek);
+//TODO
+//streams.temperatureWeek
 
-streams.windDay  = streams.wind.bufferCount(pointsInDay);
-streams.windWeek = streams.wind.bufferCount(pointsInWeek);
+//streams.humidityDay
+//streams.humidityWeek
+
+//streams.windDay
+//streams.windWeek
 //<stats streams
 
 let appPaused = true;
@@ -90,34 +77,11 @@ let i1 = setInterval(function(){
 	}
 },1000);
 
-
-let i2 = setInterval(function(){
-	if (!appPaused){
-		get('humidity',(value)=>{
-			streams.humidity.next(value)
-		});
-	}
-},1100);
+//TODO
+//get precipation, wind, humidity
 
 
-let i3 = setInterval(function(){
-	if (!appPaused){
-		get('wind',(value)=>{
-			streams.wind.next(value)
-		});
-	}
-},900);
-
-
-let i4 = setInterval(function(){
-	if (!appPaused){
-		get('precipation',(value)=>{
-			streams.precipation.next(value)
-		});
-	}
-},900);
-
-
+//graphs
 let overallGraphs = {
 	temperature : new SmoothieChart(),
 	humidity    : new SmoothieChart(),
@@ -150,18 +114,15 @@ Object.keys(overallSeries).forEach((key)=>{
 	overallGraphs[key].addTimeSeries(overallSeries[key],seriesStyles[key]);
 });
 
-//Q - how to refactor
+
 streams.temperature.subscribe((value)=>{
 	overallSeries.temperature.append(new Date().getTime(),value);
 });
 
-streams.humidity.subscribe((value)=>{
-	overallSeries.humidity.append(new Date().getTime(),value);
-});
-
-streams.wind.subscribe((value)=>{
-	overallSeries.wind.append(new Date().getTime(),value);
-});
+//TODO
+//streams.humidity
+//streams.wind
+//<graphs
 
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -178,9 +139,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 	document.getElementById('stop-app').onclick = function(){
 		clearInterval(i1);
-		clearInterval(i2);
-		clearInterval(i3);
-		clearInterval(i4);
+		//TODO - остальные интервалы
 		this.firstChild.className = 'fa fa-stop text-danger';
 	};
 
@@ -202,22 +161,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	//<graps
 
 	//watch
-	let currentTemp = document.getElementById('temp-current');
-	streams.temperature.subscribe((value)=>{
-		currentTemp.innerHTML = value;
-		colorize(currentTemp,value,tresholds.temperature);
-	});
-
-	let currentWind = document.getElementById('wind-current');
-	streams.wind.subscribe((value)=>{
-		currentWind.innerHTML = value;
-		colorize(currentWind,value,tresholds.wind);
-	});
-
-	let currentHumidity = document.getElementById('humidity-current');
-	streams.humidity.subscribe((value)=>{
-		currentHumidity.innerHTML = value;
-	});
+	//TODO
 	//<watch
 
 	//Q - how to refactor
@@ -242,93 +186,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	let weekMaxWind     = document.getElementById('wind-week-max');
 	let weekAvgWind     = document.getElementById('wind-week-avg');
 
-
-	streams.temperatureDay
-	.subscribe((values)=>{
-		let min = _.min(values);
-		let max = _.max(values);
-		let avg = _.mean(values);
-
-		dayMinTemp.innerHTML = min;
-		dayMaxTemp.innerHTML = max;
-		dayAvgTemp.innerHTML = avg;
-
-		colorize(dayMinTemp,min,tresholds.temperature);
-		colorize(dayMaxTemp,max,tresholds.temperature);
-		colorize(dayAvgTemp,avg,tresholds.temperature);
-	});
-
-
-	streams.temperatureWeek
-	.subscribe((values)=>{
-		let min = _.min(values);
-		let max = _.max(values);
-		let avg = _.mean(values);
-
-		weekMinTemp.innerHTML = min;
-		weekMaxTemp.innerHTML = max;
-		weekAvgTemp.innerHTML = avg;
-
-		colorize(weekMinTemp,min,tresholds.temperature);
-		colorize(weekMaxTemp,max,tresholds.temperature);
-		colorize(weekAvgTemp,avg,tresholds.temperature);
-	});
-
-
-	streams.windDay
-	.subscribe((values)=>{
-		let min = _.min(values);
-		let max = _.max(values);
-		let avg = _.mean(values);
-
-		dayMinWind.innerHTML = min;
-		dayMaxWind.innerHTML = max;
-		dayAvgWind.innerHTML = avg;
-
-		colorize(dayMinWind,min,tresholds.wind);
-		colorize(dayMaxWind,max,tresholds.wind);
-		colorize(dayAvgWind,avg,tresholds.wind);
-	});
-
-
-	streams.windWeek
-	.subscribe((values)=>{
-		let min = _.min(values);
-		let max = _.max(values);
-		let avg = _.mean(values);
-
-		weekMinWind.innerHTML = min;
-		weekMaxWind.innerHTML = max;
-		weekAvgWind.innerHTML = avg;
-
-		colorize(weekMinWind,min,tresholds.wind);
-		colorize(weekMaxWind,max,tresholds.wind);
-		colorize(weekAvgWind,avg,tresholds.wind);
-	});
-
-
-	streams.humidityDay
-	.subscribe((values)=>{
-		let min = _.min(values);
-		let max = _.max(values);
-		let avg = _.mean(values);
-
-		dayMinHumidity.innerHTML = min;
-		dayMaxHumidity.innerHTML = max;
-		dayAvgHumidity.innerHTML = avg;
-	});
-
-
-	streams.humidityWeek
-	.subscribe((values)=>{
-		let min = _.min(values);
-		let max = _.max(values);
-		let avg = _.mean(values);
-
-		weekMinHumidity.innerHTML = min;
-		weekMaxHumidity.innerHTML = max;
-		weekAvgHumidity.innerHTML = avg;
-	});
+	//TODO - table
 
 	//comfort || not comfort
 
@@ -341,4 +199,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 
 	//lava = the end is near
+	//rain + min temp - ледяной дождь
+	//...
 });
