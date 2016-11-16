@@ -1,7 +1,7 @@
 const Rx = require('rxjs/Rx');
 const _  = require('lodash');
 
-const apiHost = 'http://localhost:3000';
+const apiHost = 'https://example-weather-server.herokuapp.com';
 
 const get = (parameter,callback)=>{
 	fetch(`${apiHost}/${parameter}`)

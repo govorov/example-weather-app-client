@@ -4,8 +4,9 @@
   "description": "example js application for js lecture",
   "main": "index.js",
   "scripts": {
-    "build:html": "./node_modules/.bin/pug -- index.pug",
-    "build:once": "./node_modules/.bin/browserify js/app.js -o js/main.js -d",
+    "server"     : "node ./node_modules/.bin/http-server",
+    "build:html" : "./node_modules/.bin/pug -- index.pug",
+    "build:once" : "./node_modules/.bin/browserify js/app.js -o js/main.js -d",
     "build:watch": "./node_modules/.bin/watchify  js/app.js -o js/main.js -d -v"
   },
   "author": "Stanislav E. Govorov",
